@@ -1,4 +1,11 @@
 package com.example.nearbylocations;
 
-public class APIHandlerInterface {
+import java.util.ArrayList;
+
+public interface APIHandlerInterface {
+    void startRequest();
+    void handleSuccessfulRequest(ArrayList<VenueModel> list);
+    void handleFailedRequest();
+
+
 }

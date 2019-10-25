@@ -1,4 +1,4 @@
-package pt.luiscunha.product_developer_test;
+package com.example.nearbylocations;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -6,13 +6,13 @@ import org.json.JSONException;
 public class VenueModel {
 
   private String venueName;
-  private String venueRating;
+  private String venueAddress;
   private String venueIcon;
   private final static String venueIconSize = "64";
 
-  public VenueModel(String venueName, String venueRating, JSONArray venueCategories) {
+  public VenueModel(String venueName, String venueAddress, JSONArray venueCategories) {
     this.venueName = venueName;
-    this.venueRating = venueRating;
+    this.venueAddress = venueAddress;
     this.venueIcon = buildIconUri(venueCategories);
   }
 
@@ -31,8 +31,8 @@ public class VenueModel {
     return venueName;
   }
 
-  public String getVenueRating() {
-    return venueRating;
+  public String getVenueAddress() {
+    return venueAddress;
   }
 
 

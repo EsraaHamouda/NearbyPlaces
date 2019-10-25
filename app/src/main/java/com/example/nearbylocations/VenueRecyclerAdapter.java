@@ -1,12 +1,14 @@
-package pt.luiscunha.product_developer_test;
+package com.example.nearbylocations;
 
 import android.content.Context;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
@@ -41,7 +43,7 @@ public class VenueRecyclerAdapter extends
     final VenueModel selectedVenue = mVenues.get(position);
 
     holder.VenueName.setText(selectedVenue.getVenueName());
-    holder.VenueRating.setText(selectedVenue.getVenueRating());
+    holder.VenueRating.setText(selectedVenue.getVenueAddress());
     Picasso.with(mContext).load(selectedVenue.getVenueIcon())
         //attempt to load the image from cache
         .networkPolicy(NetworkPolicy.OFFLINE).fit().into(holder.VenueIcon, new Callback() {
@@ -75,7 +77,7 @@ public class VenueRecyclerAdapter extends
       super(itemView);
 
       VenueName = (TextView) itemView.findViewById(R.id.venue_name);
-      VenueRating = (TextView) itemView.findViewById(R.id.venue_rating);
+      VenueRating = (TextView) itemView.findViewById(R.id.venue_location);
       VenueIcon = (ImageView) itemView.findViewById(R.id.venue_icon);
     }
   }
