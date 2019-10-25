@@ -1,8 +1,10 @@
 package com.example.nearbylocations;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -10,7 +12,10 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RadioGroup;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -31,6 +36,8 @@ public class MainActivity extends AppCompatActivity implements APIHandlerInterfa
     private VenueRecyclerAdapter venuesRecyclerAdapter;
     private RecyclerView mRecyclerView;
     private ImageView errorImage;
+    private int isRealTime = -1;
+    private GPSTracker gps;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,21 +45,22 @@ public class MainActivity extends AppCompatActivity implements APIHandlerInterfa
         setContentView(R.layout.activity_main);
         mRecyclerView = findViewById(R.id.venues_recycler_view);
         errorImage = findViewById(R.id.error_image);
-
+        gps = new GPSTracker(this);
         if (checkPermission()) {
-            getNearbyLocations();
+            mangePrefs();
         } else {
             requestPermission();
         }
     }
 
     private void getNearbyLocations() {
-        GPSTracker gps = new GPSTracker(this);
+
         double latitude = gps.getLatitude();
         double longitude = gps.getLongitude();
         Log.i(TAG, latitude + "," + longitude);
         APIHandler apiHandler = new APIHandler(this);
         apiHandler.callNearbyLocationsAPI(this, latitude, longitude);
+
     }
 
     @Override
@@ -61,11 +69,72 @@ public class MainActivity extends AppCompatActivity implements APIHandlerInterfa
             case R.id.reload:
                 getNearbyLocations();
                 return true;
-
+            case R.id.settings:
+                showMyDialog1();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
+
+    private void mangePrefs() {
+        SharedPreferences sharedPreferences = getSharedPreferences("Settings", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        //1--> Realtime , 0 --> singleupldate
+        isRealTime = sharedPreferences.getInt("RefreshRate", -1);
+        if (isRealTime == -1) {
+            showMyDialog1();
+
+        } else if (isRealTime == 1) {
+            gps.setDistace(0);
+            getNearbyLocations();
+        } else if (isRealTime == 0) {
+            gps.setDistace(500);
+            getNearbyLocations();
+        }
+        editor.apply();
+    }
+
+    private void getNearbyLocationsRealTime() {
+    }
+
+    private void showMyDialog1() {
+        final Dialog dialog = new Dialog(this);
+        dialog.setCancelable(true);
+
+        dialog.setContentView(R.layout.switch_mode_dialog);
+
+        dialog.setTitle("Choose update mode");
+
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.copyFrom(dialog.getWindow().getAttributes());
+        lp.width = WindowManager.LayoutParams.MATCH_PARENT;
+        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+        dialog.show();
+
+        dialog.getWindow().setAttributes(lp);
+        Button btnok = (Button) dialog.findViewById(R.id.save);
+        btnok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                SharedPreferences sharedPreferences = getSharedPreferences
+                        ("Settings", MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                RadioGroup radioGroup = dialog.findViewById(R.id.mode);
+                if (radioGroup.getCheckedRadioButtonId() == R.id.realtime)
+                    editor.putInt("RefreshRate", 1);
+                else
+                    editor.putInt("RefreshRate", 0);
+                editor.apply();
+                mangePrefs();
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
+
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

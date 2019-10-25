@@ -51,7 +51,8 @@ public class APIHandler {
                         JSONObject venuesJson = items.getJSONObject(i);//.getJSONObject("venue");
                         venuesList.add(new VenueModel(
                                 venuesJson.getString("name"),
-                                venuesJson.getJSONObject("location").getString("formattedAddress"),
+                                venuesJson.getJSONObject("location").getJSONArray
+                                        ("formattedAddress").getString(0),
                                 venuesJson.getJSONArray("categories")
                         ));
                     }

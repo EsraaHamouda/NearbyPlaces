@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">NearbyLocations</string>
+    <string name="real_time">Real time update</string>
+    <string name="single_update">Single update</string>
 </resources>

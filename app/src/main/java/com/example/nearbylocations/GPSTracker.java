@@ -29,7 +29,7 @@ public final class GPSTracker implements LocationListener {
     double latitude;
     double longitude;
 
-    private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 1;
+    private static long MIN_DISTANCE_CHANGE_FOR_UPDATES = 1;
     private static final long MIN_TIME_BW_UPDATES = 1; // 1 minute
     protected LocationManager locationManager;
 
@@ -107,7 +107,7 @@ public final class GPSTracker implements LocationListener {
             latitude = location.getLatitude();
         }
 
-         return latitude;
+        return latitude;
     }
 
 
@@ -121,6 +121,11 @@ public final class GPSTracker implements LocationListener {
 
     public boolean canGetLocation() {
         return this.canGetLocation;
+    }
+
+    public void setDistace(long distace) {
+        MIN_DISTANCE_CHANGE_FOR_UPDATES = distace;
+
     }
 
     public void showSettingsAlert() {
@@ -152,6 +157,12 @@ public final class GPSTracker implements LocationListener {
 
     @Override
     public void onLocationChanged(Location location) {
+        if (location != null && MIN_DISTANCE_CHANGE_FOR_UPDATES == 500) {
+            APIHandler apiHandler = new APIHandler(mContext);
+            apiHandler.callNearbyLocationsAPI((APIHandlerInterface) mContext, location.getLatitude()
+                    , location.getLongitude());
+
+        }
     }
 
     @Override
